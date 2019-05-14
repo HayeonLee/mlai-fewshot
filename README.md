@@ -29,7 +29,7 @@ tensorboard --logdir runs
 ```
 
 Data는 materials폴더에 넣고 사용하시면 됩니다. \
-서버에서 데이터 경로: /st1/hayeon/materials \
+서버에서 데이터 경로: /st1/hayeon/materials 
 
 save 폴더: 스냅샷 저장 \
 log 폴더: txt파일로 로그 저장
