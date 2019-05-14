@@ -1,0 +1,11 @@
+#trte_spt: 'label', 'shuffle'
+#tr_qry: 'label', 'shuffle', 'cluster'
+#te_qry: 'label', 'shuffle', 'cluster'
+
+CUDA_CACHE_PATH=/st1/hayeon/tmp python draw.py \
+    --load 'dim_up' \
+    --gpu 0 \
+    --draw_epi "10000" \
+    --sample_num 3 \
+    --te_BN "False" \
+    --fname "db" 

@@ -1,0 +1,55 @@
+import argparse
+import os
+import os.path as osp
+
+import torch
+from torch.utils.data import DataLoader
+
+from data.mini_imagenet import MiniImageNet
+from loader import CategoriesSampler
+from model import Model
+from utils import *
+from collections import OrderedDict
+
+import tensorboard_logger as tb_logger
+import logging
+import logging.handlers
+from train import test
+import json
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--load', default=None)
+    parser.add_argument('--gpu', default='0')
+    parser.add_argument('--fname', default=None)
+    parser.add_argument('--te_BN', type=str2bool, default='False')
+    parser.add_argument('--draw_epi', type=str2list, default="20000, 60000")
+    parser.add_argument('--sample_num', type=int, default=3)
+    # parser.add_argument('--te_qry', default='cluster')
+    parser.add_argument('--is_tanh', default=True)
+    # parser.add_argument('--vis', type=str2bool, default=False)
+    # parser.add_argument('--debug_ep', type=str2list, default=None)
+    
+    test_args = parser.parse_args()
+    with open('../../save/{}/args.txt'.format(test_args.load), 'r') as f:
+        adict = json.load(f)
+        args = Bunch(adict)
+        args.update(test_args)
+
+    pprint(vars(args))
+    
+    set_gpu(args.gpu)
+    ars = set_path(args)
+    pprint(vars(args))
+
+    model = Model(args)
+    model.set_cuda()
+
+    debug = Debug(args, None, args.sample_num)
+
+    for epi in args.draw_epi:
+        args.load = osp.join('../../save/{}/epoch-{}.pth'.format(args.load, int(epi/100)))
+        print(args.load)
+        model.load_state_dict(torch.load(args.load))
+        debug.draw_images(model, epi)
